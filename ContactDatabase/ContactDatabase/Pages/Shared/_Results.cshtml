@@ -1,0 +1,21 @@
+﻿@if (Model.Results.Count > 0)
+{
+    @foreach (var result in Model.Results)
+    {
+        <tr>
+            <td>@result.FirstName</td>
+            <td>@result.LastName</td>
+            <td>@result.Email</td>
+            <td>@result.Title</td>
+            <td>@result.Description</td>
+            <td>@result.BirthDate.LocalDateTime.ToShortDateString()</td>
+            <td>@(result.IsMarried ? "Yes" : "No")</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="8">No Results for Query</td>
+    </tr>
+}

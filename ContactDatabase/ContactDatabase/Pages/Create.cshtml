@@ -1,0 +1,71 @@
+﻿@page
+@model ContactDatabase.Pages.CreateModel
+<div class="row">
+    <h1 class="text-center">New Contact</h1>
+    <div class="col-md-6 offset-md-3">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.FirstName">First Name</label>
+                <input class="form-control" type="text" asp-for="NewContact.FirstName" id="FirstName" name="NewContact.FirstName">
+                <span asp-validation-for="NewContact.FirstName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.LastName">Last Name</label>
+                <input class="form-control" type="text" asp-for="NewContact.LastName" id="LastName" name="NewContact.LastName">
+                <span asp-validation-for="NewContact.LastName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.Email">Email</label>
+                <input class="form-control" type="email" asp-for="NewContact.Email" id="Email" name="NewContact.Email">
+                <span asp-validation-for="NewContact.Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.Title">Title</label>
+                <select asp-for="NewContact.Title" id="title" class="form-select" name="NewContact.Title">
+                    <option selected>Select a title</option>
+                    <option value="Mr">Mr</option>
+                    <option value="Mrs">Mrs</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Dr">Dr</option>
+                    <option value="Prof">Prof</option>
+                </select>
+                <span asp-validation-for="NewContact.Title"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.Description">Description</label>
+                <textarea class="form-control" type="text" asp-for="NewContact.Description" id="description" name="NewContact.Description"></textarea>
+                <span asp-validation-for="NewContact.Description" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" asp-for="NewContact.BirthDate">Date of Birth</label>
+                <input class="form-control" type="date" asp-for="NewContact.BirthDate" id="date_of_birth" name="NewContact.BirthDate">
+                <span asp-validation-for="NewContact.BirthDate" class="text-danger"></span>
+            </div>
+            <label class="form-control p-0 mb-3 border-0">Are you married?</label>
+            <div class="form-check">
+                <input class="form-check-input" asp-for="NewContact.IsMarried" type="radio" name="NewContact.IsMarried" id="married1" value=true>
+                <label class="form-check-label" for="married1">
+                    Yes
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="NewContact.IsMarried" name="NewContact.IsMarried" id="married2" value=false>
+                <label class="form-check-label" for="married2">
+                    No
+                </label>
+            </div>
+            <span asp-validation-for="NewContact.IsMarried" class="text-danger"></span>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-success mt-3">Add Contact</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

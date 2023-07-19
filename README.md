@@ -1,4 +1,4 @@
-# Contact-Database Demo
+d# Contact-Database Demo
 
 https://github.com/yehiatarek63/Contact-Database/assets/94568731/1fb3d544-ee45-4ac2-a4fa-a0398e93600d
 
@@ -8,7 +8,7 @@ This is a contact form using edgedb that allows the user to create a contact and
   <li>Go to the Contact-Database folder</li>
   <li>Enter this command: edgedb project init --server-instance Contact-Database</li>
   <li>Press Enter on the prompts that follow</li>
-  <li>Go to the first ContactDatabase folder</li>
+  <li>Go to the second ContactDatabase folder (The one that has the .csproj)</li>
   <li>Type dotnet watch</li>
 </ul>
 

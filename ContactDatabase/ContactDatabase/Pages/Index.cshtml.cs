@@ -1,5 +1,7 @@
 ﻿using EdgeDB;
 using Htmx;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,6 +27,10 @@ namespace ContactDatabase.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToPage("SignIn");
+            }
             ContactList = (await _client.QueryAsync<Contact>("SELECT Contact {*}")).ToList();
             if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName) && string.IsNullOrEmpty(Email))
             {
@@ -46,6 +52,11 @@ namespace ContactDatabase.Pages
             if (!Request.IsHtmx())
                 return Page();
             return Partial("_Results", this);
+        }
+        public async Task<IActionResult> OnPostSignOut()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToPage("SignIn");
         }
     }
 }

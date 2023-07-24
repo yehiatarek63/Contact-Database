@@ -1,33 +1,51 @@
 ﻿using EdgeDB;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 
 namespace ContactDatabase;
 
 [EdgeDBType]
 public class Contact
 {
-    [EdgeDBProperty("first_name")]
+    public Guid Id { get; set; }
     [Required]
     public string? FirstName { get; set; }
-    [EdgeDBProperty("last_name")]
     [Required]
     public string? LastName { get; set; }
-    [EdgeDBProperty("email")]
     [Required]
     public string? Email { get; set; }
-    [EdgeDBProperty("title")]
     [Required]
     public TitleState? Title { get; set; }
-    [EdgeDBProperty("description")]
     [Required]
     public string? Description { get; set; }
-    [EdgeDBProperty("date_of_birth")]
     [Required]
-    public DateTimeOffset BirthDate { get; set; }
-    [EdgeDBProperty("marriage_status")]
+    public DateTimeOffset DateOfBirth { get; set; }
     [Required]
-    public bool? IsMarried { get; set; }
+    public bool? MarriageStatus { get; set; }
+    [Required]
+    public string? Username { get; set; }
+    [Required]
+    public string? Password { get; set; }
+    [Required]
+    public RoleState? Roles { get; set; }
+    public byte[]? Salt { get; set; }
+    public static byte[] GenerateSalt()
+    {
+        byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+        return salt;
+    }
+    public static string HashPassword(string password, byte[] salt)
+    {
+        string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                       password: password,
+                       salt: salt,
+                       prf: KeyDerivationPrf.HMACSHA512,
+                       iterationCount: 10000,
+                       numBytesRequested: 256 / 8));
+        return hashed;
+    }
 
 }
 public enum TitleState
@@ -38,3 +56,11 @@ public enum TitleState
     Dr,
     Prof
 }
+
+public enum RoleState
+{
+    User,
+    Admin
+}
+
+

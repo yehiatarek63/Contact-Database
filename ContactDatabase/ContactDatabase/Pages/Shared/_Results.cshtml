@@ -8,14 +8,50 @@
             <td>@result.Email</td>
             <td>@result.Title</td>
             <td>@result.Description</td>
-            <td>@result.BirthDate.LocalDateTime.ToShortDateString()</td>
-            <td>@(result.IsMarried ? "Yes" : "No")</td>
+            <td>@result.DateOfBirth.LocalDateTime.ToShortDateString()</td>
+            <td>@(result.MarriageStatus ? "Yes" : "No")</td>
+            @if(User.IsInRole("Admin")){
+                <td>
+                    <a asp-page="Edit" asp-route-id="@result.Id" class="btn btn-success">Edit</a>
+                    <button type="button" class="btn btn-danger" onclick="deleteContact('@result.Id', this)">Delete</button>
+                </td>
+            }
         </tr>
     }
 }
 else
 {
     <tr>
-        <td colspan="8">No Results for Query</td>
+        <td colspan="8">No Results</td>
     </tr>
 }
+
+<script>
+    async function deleteContact(id, button) {
+        const url = '/remove-contact';
+        data = id;
+        console.log("hello")
+        var row = button.closest('tr');
+        var options = {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'text/plain',
+                RequestVerificationToken: $('input:hidden[name="__RequestVerificationToken"]').val(),
+                "Content-Type": "text/plain"
+            },
+            body: data
+        };
+        try {
+            var response = await fetch(url, options);
+            if (response.ok) {
+                console.log('Request succeeded')
+                row.remove();
+            } else {
+                console.error('Request failed');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+</script>

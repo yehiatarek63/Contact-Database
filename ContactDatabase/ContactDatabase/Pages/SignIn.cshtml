@@ -1,0 +1,29 @@
+﻿@page
+@model ContactDatabase.Pages.SignInModel
+
+<div class="container d-flex justify-content-center align-items-center mt-5">
+    <div class="row">
+        <div class="col">
+            <div class="card shadow">
+                <h1 class="card-img-top d-flex justify-content-center pt-3">Sign In</h1>
+                <div class="card-body">
+                    <form method="post" asp-page-handler="SignIn">
+                        <div class="mb-3">
+                            <label class="form-label" for="Username">Username</label>
+                            <input asp-for="UserLogin.Username" class="form-control" type="text" name="UserLogin.Username">
+                            <span asp-validation-for="UserLogin.Username" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="Password">Password</label>
+                            <input asp-for="UserLogin.Password" class="form-control" type="password" name="UserLogin.Password">
+                            <span asp-validation-for="UserLogin.Password" class="text-danger"></span>
+                        </div>
+                        <div asp-validation-summary="ModelOnly" class="text-danger">
+                        </div>
+                        <button class="btn btn-success d-flex justify-content-center">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

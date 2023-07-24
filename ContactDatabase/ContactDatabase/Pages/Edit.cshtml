@@ -1,9 +1,19 @@
 ﻿@page
-@model ContactDatabase.Pages.CreateModel
+@model ContactDatabase.Pages.EditModel
+
+
 <div class="row">
-    <h1 class="text-center">New Contact</h1>
+    <h1 class="text-center">Edit Contact</h1>
     <div class="col-md-6 offset-md-3">
         <form method="post">
+            <input asp-for="EditContact.Id" hidden/>
+            <input asp-for="EditContact.Username"  hidden/>
+            <input asp-for="EditContact.Password" hidden />
+            <input asp-for="EditContact.Roles" hidden />
+            @{
+                string saltString = Convert.ToBase64String(Model.EditContact.Salt);
+                <input asp-for="EditContact.Salt" value="@saltString" hidden/>
+            }            
             <div class="mb-3">
                 <label class="form-label" asp-for="EditContact.FirstName">First Name</label>
                 <input class="form-control" type="text" asp-for="EditContact.FirstName" id="FirstName" name="EditContact.FirstName">
@@ -38,7 +48,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label" asp-for="EditContact.DateOfBirth">Date of Birth</label>
-                <input class="form-control" type="date" asp-for="EditContact.DateOfBirth" id="date_of_birth" name="EditContact.DateOfBirth">
+                <input class="form-control" asp-for="EditContact.DateOfBirth" id="date_of_birth" name="EditContact.DateOfBirth" asp-format="{0:MM-dd-yyyy}" />
                 <span asp-validation-for="EditContact.DateOfBirth" class="text-danger"></span>
             </div>
             <label class="form-control p-0 mb-3 border-0">Are you married?</label>
@@ -56,30 +66,7 @@
             </div>
             <span asp-validation-for="EditContact.MarriageStatus" class="text-danger"></span>
             <div class="mb-3">
-                <label class="form-label" asp-for="EditContact.Username">Username</label>
-                <input class="form-control" type="text" asp-for="EditContact.Username" id="Username" name="EditContact.Username">
-                <span asp-validation-for="EditContact.Username" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label class="form-label" asp-for="EditContact.Password">Password</label>
-                <input class="form-control" type="password" asp-for="EditContact.Password" id="Password" name="EditContact.Password">
-                <span asp-validation-for="EditContact.Password" class="text-danger"></span>
-            </div>
-            <label class="form-control p-0 mb-3 border-0">Specify your role</label>
-            <div class="form-check">
-                <input class="form-check-input" asp-for="EditContact.Roles" type="radio" name="EditContact.Roles" id="role1" value=User>
-                <label class="form-check-label" for="role1">
-                    User
-                </label>
-            </div>
-            <div class="form-check mb-3">
-                <input class="form-check-input" type="radio" asp-for="EditContact.Roles" name="EditContact.Roles" id="role2" value=Admin>
-                <label class="form-check-label" for="role2">
-                    Admin
-                </label>
-            </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-success mt-3">Add Contact</button>
+                <button type="submit" class="btn btn-success mt-3">Edit Contact</button>
             </div>
         </form>
 

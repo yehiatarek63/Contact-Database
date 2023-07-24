@@ -1,11 +1,41 @@
 using EdgeDB;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Security.Claims;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddEdgeDB();
+builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("Contact_Database"), config =>
+{
+    config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
+});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
 var app = builder.Build();
 
+
+app.MapDelete("/remove-contact", async (HttpContext context, EdgeDBClient client) =>
+{
+    if(context.User.IsInRole("Admin"))
+    {
+        using var reader = new StreamReader(context.Request.Body);
+        var id = await reader.ReadToEndAsync();
+        Guid guidId = Guid.Parse(id);
+        if (string.IsNullOrEmpty(id))
+        {
+            return Results.BadRequest();
+        }
+        await client.ExecuteAsync("DELETE Contact FILTER .id = <uuid>$id", new Dictionary<string, object?>
+        {
+            { "id", guidId }
+        });
+        return Results.Ok();
+    }
+    return Results.Unauthorized();
+});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -18,7 +48,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

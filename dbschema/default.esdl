@@ -13,7 +13,6 @@ module default {
             constraint exclusive;
         };
         required password: str;
-        required salt: bytes;
         required roles: Roles;
     }
 }

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using EdgeDB;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Data.SqlTypes;
+using Microsoft.AspNetCore.Identity;
 
 namespace ContactDatabase.Pages;
 [BindProperties]
@@ -14,9 +15,11 @@ public class SignInModel : PageModel
 {
     public LoginInput UserLogin { get; set; }
     private readonly EdgeDBClient _client;
-    public SignInModel(EdgeDBClient client)
+    private readonly IPasswordHasher<Contact> _passwordHasher;
+    public SignInModel(EdgeDBClient client, IPasswordHasher<Contact> passwordHasher)
     {
         _client = client;
+        _passwordHasher = passwordHasher;
     }
     public void OnGet()
     {
@@ -25,7 +28,7 @@ public class SignInModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            Contact? user = await AuthenticateUser(UserLogin, _client);
+            Contact? user = await AuthenticateUser(UserLogin, _client, _passwordHasher);
             if (user is not null)
             {
                 var claims = new List<Claim>
@@ -49,7 +52,7 @@ public class SignInModel : PageModel
         return Page();
     }
 
-    public static async Task<Contact?> AuthenticateUser(LoginInput user, EdgeDBClient client)
+    public static async Task<Contact?> AuthenticateUser(LoginInput user, EdgeDBClient client, IPasswordHasher<Contact> passwordHasher)
     {
         var saltQuery = "SELECT Contact {*} FILTER .username = <str>$username";
         var saltParameters = new Dictionary<string, object?>
@@ -59,20 +62,15 @@ public class SignInModel : PageModel
         Contact? userSalt = await client.QuerySingleAsync<Contact>(saltQuery, saltParameters);
         if (userSalt is not null)
         {
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                           password: user.Password,
-                           salt: userSalt.Salt,
-                           prf: KeyDerivationPrf.HMACSHA512,
-                           iterationCount: 10000,
-                           numBytesRequested: 256 / 8));
-            var query = "SELECT Contact {*} FILTER .username = <str>$username AND .password = <str>$password";
-            var parameters = new Dictionary<string, object?>
+            PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(userSalt, userSalt.Password, user.Password);
+            if(result == PasswordVerificationResult.Success)
             {
-                { "username", user.Username },
-                { "password", hashed }
-            };
-            Contact? result = await client.QuerySingleAsync<Contact>(query, parameters);
-            return result;
+                return userSalt;
+            }
+            else
+            {
+                return null;
+            }
         }
         return null;
     }

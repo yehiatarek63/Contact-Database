@@ -1,5 +1,7 @@
+using ContactDatabase;
 using EdgeDB;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Security.Claims;
@@ -14,6 +16,7 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("Contact_Database")
 });
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
+builder.Services.AddScoped<IPasswordHasher<Contact>, PasswordHasher<Contact>>();
 var app = builder.Build();
 
 
